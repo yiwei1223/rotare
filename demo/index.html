@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+        <title></title>
+        <link rel="stylesheet" href="resource/index.css"/>
+    </head>
+    <body>
+        <h3>请在手机模式下打开</h3>
+        <div class="warp">
+            <img src="resource/activity_cent_turntable.png" alt="" class="runner-disk"/>
+            <img src="resource/action_button_normal.png" alt="" class="runner-pointer normal-btn"/>
+        </div>
+        <script src="resource/zepto.min.js"></script>
+        <script src="../build/rotare.min.1.0.0.js"></script>
+        <script type="text/javascript">
+            $(function () {
+                $('.normal-btn').on('touchend', function () {
+                    window.rotare.start({
+                        time: 3500,
+                        direction: 'left',
+                        categoryOrigin: '.runner-disk',
+                        animateTo: [[36, 108]],
+                        random: [10, 15],
+                        loops: 5,
+                        easing: 'cubic-bezier(0.42,0,0.58,1)',
+                        reset: false
+                    }, function () {
+                        alert('恭喜你获得小米平板2');
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

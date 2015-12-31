@@ -1,0 +1,21 @@
+.warp {
+    width: 80%;
+    margin: 10px auto;
+    position: relative;
+}
+
+.runner-disk {
+    display: block;
+    width: 100%;
+}
+
+.runner-pointer {
+    position: absolute;
+    display: block;
+    width: 20%;
+    top: 50%;
+    left: 50%;
+    margin-left: -10%;
+    transform: translate3d(0, -50%, 0);
+    -webkit-transform: translate3d(0, -50%, 0);
+}
