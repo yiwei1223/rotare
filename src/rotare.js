@@ -150,7 +150,9 @@
                 _source = source[0].concat([]);
             }
         }
-        _source.sort();
+        _source.sort(function (item1, item2) {
+            return item1 - item2;
+        });
         return Math.floor((_source[0]+_random[0])+Math.random()*((_source[1]-_random[1])-(_source[0]+_random[0])));
     };
 
