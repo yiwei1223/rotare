@@ -13,18 +13,28 @@
             <img src="resource/action_button_normal.png" alt="" class="runner-pointer normal-btn"/>
         </div>
         <script src="resource/zepto.min.js"></script>
-        <script src="../build/rotare.min.1.0.0.js"></script>
+        <script src="../build/rotare.min.2.0.0.js"></script>
         <script type="text/javascript">
             $(function () {
                 $('.normal-btn').on('touchend', function () {
                     window.rotare.start({
-                        time: 3500,
-                        direction: 'left',
-                        categoryOrigin: '.runner-disk',
+                        time: 2500,
+                        categoryOrigin: {
+                            pointer: {
+                                direction: 'left',
+                                loops: 5,
+                                easing: 'cubic-bezier(0.42,0,0.58,1)',
+                                selector: '.runner-pointer'
+                            },
+                            disc: {
+                                direction: 'right',
+                                loops: 5,
+                                easing: 'cubic-bezier(0.42,0,0.58,1)',
+                                selector: '.runner-disk'
+                            }
+                        },
                         animateTo: [[36, 108]],
                         random: [10, 15],
-                        loops: 5,
-                        easing: 'cubic-bezier(0.42,0,0.58,1)',
                         reset: false
                     }, function () {
                         alert('恭喜你获得小米平板2');

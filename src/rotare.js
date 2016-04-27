@@ -1,22 +1,19 @@
 /**!
- * mi.rotare.js 1.0.0 (c) 2015 Yi wei - MIT license
+ * mi.rotare.js 2.0.0 (c) 2015 Yi wei - MIT license
  * @desc 抽奖转盘插件
  */
 ;(function ($, w) {
+    // 全局参数
+    var _loop = -1,
+        _keys = null,
+        _callback = null,
+        _count = 0;
+
     /**
      * @desc the obj rotare expose to user
      */
     var rotare = {
-        $conf: null,
-        beforeConf: {
-            direction: 'right',
-            easing: 'linear',
-            time: 450
-        },
-        loop: -1,
-        $prev: {
-            animateTo: 0
-        },
+        VERSION: '2.0.0',
         /**
          * @desc  执行转轮
          * @param conf 配置
@@ -34,95 +31,102 @@
          * @param callback 回调
          */
         start: function (conf, callback) {
-            var that = this;
-            that.loop++;
-            that.$conf = initConf(conf, that.loop, that.beforeConf, that.$prev);
-            $(that.$conf.conf.categoryOrigin).css(that.$conf.css);
-            $(that.$conf.conf.categoryOrigin).on('webkitTransitionEnd', function () {
-                callback && callback();
-                if (that.$conf.conf.reset) {
-                    reset && reset(that.$conf.conf);
-                    return;
-                }
-                stop && stop(that.$conf);
-                that.deg && that.deg(that.$conf);
-            });
-        },
-
-        /**
-         * @desc 真正计算出所转角度前的转动，适用于在$.ajax中的beforeSend回调中使用
-         * @param conf 与start方法参数一致
-         */
-        beforeGo: function (conf)  {
-            var that = this;
-            $.extend(that.beforeConf, conf);
-            $(conf.categoryOrigin).css({
-                'animation': 'rotare_' + that.beforeConf.direction + ' ' + that.beforeConf.time + 'ms ' + that.beforeConf.easing + ' infinite',
-                '-webkit-animation': 'rotare_' + that.beforeConf.direction + ' ' + that.beforeConf.time + 'ms ' + that.beforeConf.easing + ' infinite'
-            });
-        },
-
-        /**
-         * @desc 获取当前所转角度
-         */
-        deg: function (conf) {
-            var that = this;
-            that.$prev.animateTo = conf._css.direction == '-' ? - conf._css.animateTo : conf._css.animateTo;
-            that.$prev.direction = conf.conf.direction;
+            if (checkConf(conf)) {
+                console.error('参数初始化错误！');
+            } else {
+                _loop++;
+                _keys = Object.keys(conf.categoryOrigin).sort().reverse();
+                _callback = callback.bind(this);
+                var that = this;
+                initConf && initConf($.extend(conf, {_flag: _keys.length}));
+            }
         }
     };
 
     /**
-     * @desc 内部函数，执行参数初始化
+     * @desc 检查参数
      * @param conf
-     * @param loop
-     * @param beforeConf
-     * @param prev
-     * @returns {{}}
      */
-    var initConf  = function (conf, loop, beforeConf, prev) {
-        var _conf = {
-            direction: 'right',
-            angle: 0,
-            easing: 'linear',
-            random: [0, 0],
-            reset: false
-        };
-        $.extend(_conf, conf);
+    function checkConf(conf) {
+        return !conf || !conf.categoryOrigin || Object.keys(conf.categoryOrigin).length == 0 || !conf.animateTo || !Array.isArray(conf.animateTo);
+    }
+
+    /**
+     * @desc 初始化转盘
+     * @param conf
+     */
+    function initConf(conf) {
+        var origin = conf.categoryOrigin[_keys[0]],
+            symbol = _keys[0] == 'pointer' ? '-' : '+';
         var _css = {
-            time: beforeConf.time * (_conf.loops) + 'ms',
-            easing: _conf.easing,
-            direction:  _conf.direction == 'right' ? '' : '-',
-            animateTo: random(_conf.animateTo, _conf.direction,  _conf.random) + (_conf.loops+loop*5) * 360
-        };
-        return {
-            conf: _conf,
-            css: {
-                'transform': 'rotate(' + _css.direction + _css.animateTo + 'deg)',
-                '-webkit-transform': 'rotate(' + _css.direction + _css.animateTo + 'deg)',
+                time: conf.time + 'ms',
+                easing: origin.easing,
+                direction:  origin.direction == 'right' ? '' : '-'
+            },
+            css = {
                 'transition': 'all ' + _css.time + ' ' + _css.easing,
                 '-webkit-transition': 'all ' + _css.time + ' ' + _css.easing
-            },
-            _css: _css
-        };
-    };
+            };
+        if (conf._flag ==1) { // 指针或者转盘转动
+            if (symbol == '-') {
+                _css.animateTo = parseInt(symbol + random(conf.animateTo, origin.direction,  conf.random)) + (origin.loops+_loop*5) * 360;
+            } else {
+                _css.animateTo =random(conf.animateTo, origin.direction,  conf.random) + (origin.loops+_loop*5) * 360;
+            }
+            css['transform'] = 'rotate(' + _css.direction + _css.animateTo + 'deg)';
+            css['-webkit-transform'] = 'rotate(' + _css.direction + _css.animateTo + 'deg)';
+            goRotare && goRotare([{
+                selector: origin.selector,
+                reset: conf.reset || false,
+                css: css
+            }]);
+        } else { //指针和转盘同时转动
+            _css.animateTo = (origin.loops+_loop*5) * 360;
+            css['transform'] = 'rotate(' + _css.direction + _css.animateTo + 'deg)';
+            css['-webkit-transform'] = 'rotate(' + _css.direction + _css.animateTo + 'deg)';
+            var origin_two = conf.categoryOrigin[_keys[1]];
+            var _css_two = {
+                    time: conf.time + 'ms',
+                    easing: origin_two.easing,
+                    direction:  origin_two.direction == 'right' ? '' : '-',
+                    animateTo: random(conf.animateTo, origin_two.direction,  conf.random) + (origin_two.loops+_loop*5) * 360
+                },
+                css_two = {
+                    'transform': 'rotate(' + _css_two.direction + _css_two.animateTo + 'deg)',
+                    '-webkit-transform': 'rotate(' + _css_two.direction + _css_two.animateTo + 'deg)',
+                    'transition': 'all ' + _css_two.time + ' ' + _css_two.easing,
+                    '-webkit-transition': 'all ' + _css_two.time + ' ' + _css_two.easing
+                };
+            goRotare && goRotare([{
+                selector: origin.selector,
+                reset: conf.reset || false,
+                css: css
+            }, {
+                selector: origin_two.selector,
+                reset: conf.reset || false,
+                css: css_two
+            }]);
+        }
+    }
 
     /**
-     * @desc 重置
-     * @param conf
+     * @desc 最终执行动画函数
+     * @param arr []
      */
-    var reset = function (conf) {
-        $(conf.categoryOrigin).off('webkitTransitionEnd');
-        $(conf.categoryOrigin).attr('style', '');
-    };
-
-    /**
-     *
-     * @param conf
-     */
-    var stop = function (conf) {
-        $(conf.conf.categoryOrigin).off('webkitTransitionEnd');
-    };
+    function goRotare(arr) {
+        arr.forEach(function (item, index) {
+            $(item.selector).css(item.css).on('webkitTransitionEnd', function (ev) {
+                $(item.selector).off('webkitTransitionEnd');
+                if (_keys.length == index + 1) {
+                    _callback && _callback();
+                }
+                if (item.reset) {
+                    _loop = -1;
+                    $(item.selector).attr('style', '');
+                }
+            });
+        });
+    }
 
     /**
      * @desc 生成某个范围内的随机数

@@ -1,6 +1,6 @@
 {
   "name": "rotare",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "一个转轮抽奖插件",
   "main": "index.js",
   "scripts": {
