@@ -10,11 +10,22 @@ A Javascript(AMD, node)module realization draw runner
 	window.rotare.start({
         time: 3500,
         direction: 'left',
-        categoryOrigin: '.runner-disk',
+        categoryOrigin: {
+            pointer: {
+                direction: 'left',
+                loops: 5,
+                easing: 'cubic-bezier(0.42,0,0.58,1)',
+                selector: '.runner-pointer'
+            },
+            disc: {
+                direction: 'right',
+                loops: 5,
+                easing: 'cubic-bezier(0.42,0,0.58,1)',
+                selector: '.runner-disk'
+            }
+        },
         animateTo: [20, 60],
         random: [10, 15],
-        loops: 5,
-        easing: 'cubic-bezier(0.42,0,0.58,1)',
         reset: false
     }, function () {
         //do something

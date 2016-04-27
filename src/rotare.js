@@ -20,12 +20,22 @@
          *        {
          *          time: 3000, // 执行时间3000ms，如果没有设定此值，除非执行stop(), 否则将一直执行下去
          *          direction: 'right || left' // 转动方向顺时针或逆时针, 默认为'clockwise'
-         *          categoryOrigin: '.disk-img', // 策略源(即要转动的对象，传入一个对应的selector即可),
-         *          angle: 0, // 起始角度,默认为0,
+         *          categoryOrigin: {
+         *               pointer: {
+         *                   direction: 'left',
+         *                   loops: 5,
+         *                   easing: 'cubic-bezier(0.42,0,0.58,1)',
+         *                   selector: '.runner-pointer'
+         *               },
+         *               disc: {
+         *                   direction: 'right',
+         *                   loops: 5,
+         *                   easing: 'cubic-bezier(0.42,0,0.58,1)',
+         *                   selector: '.runner-disk'
+         *               }
+         *          },
          *          random: [5, 6], //指针停止区域, 主要是为了指针正好停止在边界， 默认为[0, 0]
          *          animateTo: [[0, 30]] 结束的角度范围,
-         *          easing: 'linear', // 运动方式，与css3 transition一致,
-         *          loops: 3 // 完整的圈数 默认为0,
          *          reset: true || false //是否重置，即转完后回到初始位置，默认为false
          *        }
          * @param callback 回调
